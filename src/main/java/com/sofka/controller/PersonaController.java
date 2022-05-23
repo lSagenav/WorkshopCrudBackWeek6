@@ -4,7 +4,6 @@
  *
  * @author [Juan Carlos Vanegas Palencia]
  *
- * @version [1.0.0 / 2022-03-13]
  */
 
 package com.sofka.controller;
@@ -37,15 +36,26 @@ public class PersonaController {
 
     private Response response = new Response();
 
+    /**
+     * index o pagina inical donde nos saldra un breve mensaje diciendo que el backend
+     * funciona perfectamente.
+     * @return
+     */
     @GetMapping(path = "/")
     public Map<String, String> index() {
         var respuesta = new HashMap<String, String>();
-        respuesta.put("message", "Hola Mundo");
+        respuesta.put("message", "Progranma Backend funcional");
         return respuesta;
     }
 
+    /**
+     * ruta en al cual podes ingresar desde el navegador y visualizar todos los datos
+     * que tengas guardados en la bd
+     * localhost:9090/personas
+     * @return un jSon con los datos de la bd
+     */
     @GetMapping(path = "/personas")
-    public Response listado() {
+    public ResponseEntity<Response> listado() {
         try {
             response.data = personaService.list();
         } catch (Exception exc) {
@@ -53,9 +63,14 @@ public class PersonaController {
             response.message = exc.getMessage();
 
         }
-        return response;
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    /**
+     * aqui estaremos relizando lo qu es la creacion de los nuevos contactos
+     * @param persona
+     * @return
+     */
     @PostMapping(path = "/persona", consumes = "application/json")
     public ResponseEntity<Response> crear(@RequestBody Persona persona) {
 
@@ -71,6 +86,12 @@ public class PersonaController {
         }
     }
 
+    /**
+     * metodo que usaremos para realizar la eliminacion de las personas o mas bien de los
+     * contactos que hemos guardado en la bd
+     * @param persona
+     * @return
+     */
     @DeleteMapping(path = "/persona/{id}")
     public ResponseEntity<Persona> borrar(Persona persona) {
         log.info("Borrar persona: {}", persona);
@@ -78,6 +99,13 @@ public class PersonaController {
         return new ResponseEntity<>(persona, HttpStatus.OK);
     }
 
+    /**
+     * metodo que estaremos usando para realizar la actualizacion de los datos de cada contacto quee tengamos guardos
+     * en la base de datos
+     * @param persona
+     * @param id
+     * @return
+     */
     @PutMapping(path = "/persona/{id}")
     public ResponseEntity<Persona> actualizar(Persona persona, @PathVariable("id") Long id) {
         log.info("Moficar persona: {}", persona);
